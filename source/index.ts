@@ -1,4 +1,4 @@
-import localStorage from '@yootil/capsule/local-storage';
+import localStorage from './local-storage';
 
 type CapsuleValue <T> = {
   __data__: T,
