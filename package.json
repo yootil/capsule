@@ -1,6 +1,6 @@
 {
   "name": "@yootil/capsule",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "A lightweight wrapper for better, typed localStorage interactions.",
   "author": "Matt Balmer <contact@mattbalmer.com>",
   "license": "MIT",

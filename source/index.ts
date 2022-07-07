@@ -24,6 +24,7 @@ export class Capsule<T extends Record<string, unknown>> {
   private get prefixDel(): string {
     return `${this.prefix}${DELIMITER}`;
   }
+  get typeref(): T { return null };
 
   constructor(prefix: string, data: Partial<T> = {}) {
     this.prefix = prefix || '';
