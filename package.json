@@ -1,6 +1,6 @@
 {
   "name": "@yootil/capsule",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A lightweight wrapper for better, typed localStorage interactions.",
   "author": "Matt Balmer <contact@mattbalmer.com>",
   "license": "MIT",
@@ -13,6 +13,7 @@
   "scripts": {
     "start": "tsc --watch",
     "compile": "tsc",
+    "prepare": "npm test && npm run compile",
     "test": "mocha --require ts-node/register --require tsconfig-paths/register --require mock-local-storage --timeout 60000 -R spec 'tests/**/*.test.ts'"
   },
   "keywords": [
