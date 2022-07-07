@@ -81,6 +81,8 @@ describe('Capsule', () => {
         foo: 'bar',
       });
 
+      // This raises: TS2345: Argument of type '"foobar"' is not assignable to parameter of type '"foo"'.
+      // @ts-ignore
       expect(capsule.has('foobar')).to.deep.equal(false);
     });
 
@@ -116,17 +118,13 @@ describe('Capsule', () => {
     });
 
     it('get() respects type info', () => {
-      type TempCountType = {
-        count: number,
-      };
-
       const capsule = new Capsule('test', {
         foo: {
           count: 5,
         },
       });
 
-      const value = capsule.get<TempCountType>('foo');
+      const value = capsule.get('foo');
 
       // Typing info is present
       expect(value.count).to.deep.equal(5);

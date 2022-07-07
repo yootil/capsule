@@ -47,4 +47,24 @@ capsule.get('myMap');
 
 // Can be given types
 capsule.get<number>('foo'); // typescript now treats return type as 'number'
+
+type User = { name, /* ... */ };
+type MyCapsuleType = {
+  foo: string,
+  count: number,
+  users: User[],
+}
+
+const typedCapsule = new Capsule<MyCapsuleType>('typed-capsule');
+
+const users = typedCapsule.get('users'); // users is type User[]
+
+// raises: TS2345: Argument of type '"notAkey"' is not assignable to parameter of type 'keyof MyCapsuleType'.
+typedCapsule.set('notAkey', 'foo');
 ```
+
+If no type is given in the constructor type params `new Capsule<YourType>()`, then the type will be inferred from the initialData argument.
+
+If no initialArgument is given, the types will all be `unknown`, and all keys will be allowed.
+
+If you wish to provide initial data without hard type checking, provide `new Capsule<any>()` or `new Capsule<Record<string, unknown>>()`

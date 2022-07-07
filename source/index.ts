@@ -18,14 +18,14 @@ export const fromDataString = <T = any>(raw: string): T => {
   return parsed.__data__;
 }
 
-export class Capsule {
+export class Capsule<T extends Record<string, unknown>> {
   private readonly prefix: string;
-  private keys: Set<string>;
+  private keys: Set<keyof T>;
   private get prefixDel(): string {
     return `${this.prefix}${DELIMITER}`;
   }
 
-  constructor(prefix: string, data: Object) {
+  constructor(prefix: string, data: Partial<T> = {}) {
     this.prefix = prefix || '';
     this.keys = new Set();
 
@@ -33,7 +33,7 @@ export class Capsule {
     this.sync();
   }
 
-  private setDefaults(data: Object = {}) {
+  private setDefaults(data: Partial<T> = {}) {
     for(let key in data) {
       if(data.hasOwnProperty(key) && !this.has(key)) {
         this.set(key, data[key]);
@@ -52,21 +52,21 @@ export class Capsule {
     }
   }
 
-  private unprefixKey_(pre_key: string): string {
+  private unprefixKey_(pre_key: string): keyof T {
     return pre_key.replace(new RegExp(this.prefixDel), '');
   }
 
-  private prefixKey_(key: string): string {
-    return `${this.prefixDel}${key}`;
+  private prefixKey_(key: keyof T): string {
+    return `${this.prefixDel}${String(key)}`;
   }
 
-  public has(key: string): boolean {
+  public has(key: keyof T): boolean {
     const pre_key = this.prefixKey_(key);
 
     return localStorage.hasOwnProperty(pre_key);
   }
 
-  public set(key: string, value: any): void {
+  public set<K extends keyof T, V = T[K]>(key: K, value: V): void {
     const pre_key = this.prefixKey_(key);
     this.keys.add(key);
 
@@ -74,12 +74,12 @@ export class Capsule {
       const dataString = toDataString(value);
       localStorage.setItem(pre_key, dataString);
     } catch (e) {
-      console.warn(`Capsule (${this.prefix}) failed to save '{ ${key}: ${value} }'. localStorage may be full.`);
-      throw new Error(`Capsule (${this.prefix}) failed to save '{ ${key}: ${value} }'. localStorage may be full.`);
+      console.warn(`Capsule (${this.prefix}) failed to save '{ ${String(key)}: ${value} }'. localStorage may be full.`);
+      throw new Error(`Capsule (${this.prefix}) failed to save '{ ${String(key)}: ${value} }'. localStorage may be full.`);
     }
   }
 
-  public get<T>(key: string, defaultValue: T = undefined): T {
+  public get<K extends keyof T, V = T[K]>(key: K, defaultValue: V = undefined): V {
     const pre_key = this.prefixKey_(key);
 
     if(!localStorage.hasOwnProperty(pre_key)) {
@@ -88,10 +88,10 @@ export class Capsule {
 
     try {
       const dataString = localStorage.getItem(pre_key);
-      return fromDataString<T>(dataString);
+      return fromDataString<V>(dataString);
     } catch (e) {
-      console.warn(`Capsule (${this.prefix}) could not load the item with key: ${key}`);
-      throw new Error(`Capsule (${this.prefix}) could not load the item with key: ${key}`);
+      console.warn(`Capsule (${this.prefix}) could not load the item with key: ${String(key)}`);
+      throw new Error(`Capsule (${this.prefix}) could not load the item with key: ${String(key)}`);
     }
   }
 
