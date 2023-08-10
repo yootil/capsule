@@ -53,6 +53,16 @@ describe('Capsule', () => {
 
       expect(localStorage.getItem('test_key2')).to.deep.equal(`{"__data__":"initial-value-previous"}`);
     });
+
+    it('stores type info if hydrateable', () => {
+      localStorage.setItem(`test_key3`, 'value3');
+
+      const capsule = new Capsule('test', {
+        key2: new Date(1657196329497),
+      });
+
+      expect(localStorage.getItem('test_key2')).to.deep.equal(`{"__data__":"2022-07-07T12:18:49.497Z","__type__":"date"}`);
+    });
   });
 
   describe('prefix helpers', () => {
@@ -146,6 +156,20 @@ describe('Capsule', () => {
         );
       }
     });
+
+    describe('hydration', () => {
+      it('get() hydrates into Date if hydrateDates is true', () => {
+        const date = new Date(1657196329497);
+        const capsule = new Capsule('test', {
+          date,
+        });
+
+        const rehydrated = capsule.get('date');
+
+        expect(rehydrated instanceof Date).to.deep.equal(true);
+        expect(rehydrated).to.deep.equal(date);
+      });
+    });
   });
 
   describe('set()', () => {
@@ -188,6 +212,21 @@ describe('Capsule', () => {
 
       expect(localStorage.getItem(`test_foo`)).to.deep.equal(toDataString('bar'));
       expect(capsule.get('foo')).to.deep.equal('bar');
+    });
+
+    describe('hydration', () => {
+      it('set() stores type info if type is hydrateable', () => {
+        const capsule = new Capsule('test', {});
+
+        const date = new Date(1657196329497);
+        capsule.set('date', date);
+
+        expect(localStorage.getItem(`test_date`)).to.deep.equal(toDataString(date, {
+          transforms: {
+            'Date': true,
+          }
+        }));
+      });
     });
   });
 
