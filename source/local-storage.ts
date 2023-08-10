@@ -1,6 +1,6 @@
 let storageImpl: Storage;
 
-const globalContext = (global || window);
+const globalContext = (window);
 
 // @ts-ignore
 if (globalContext && globalContext.localStorage) {
